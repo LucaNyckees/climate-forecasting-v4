@@ -1,0 +1,2 @@
+Normality test : p-value = 1.1729007035688223e-14
+Heteroskedasticity test : p-value = 0.8031449233839607
