@@ -13,7 +13,7 @@ from paths import paths
 from streamlit_functions import *
 from streamlit_forecasting import st_forecasting
 from streamlit_monthly import monthly_analysis
-
+from streamlit_EVA import max_min_analysis
 
 # STREAMLIT STRUCTURAL CONFIGURATION
 
@@ -28,12 +28,13 @@ st.markdown("<h1 style='text-align: center;'> Meteorological data visualization<
             unsafe_allow_html=True)
 
 
-MODES = ['Descriptive Statistics','Time Series Analysis', 'Time Series Visualization', 'Time Series Analysis']
+MODES = ['Descriptive Statistics','Time Series Analysis','Extreme Value Analysis', 'Time Series Visualization', 'Time Series Analysis']
 MODES_TS = ["Annual Mean Temperature at Geneva Observatory","Monthly Mean Temperature at Geneva Observatory"]
+MODES_EVA = ["Max-Min temeprature extreme analysis at Geneva Observatory"]
 
 st.sidebar.header('Options')
 
-INFO = st.sidebar.radio("Content",('Project description', 'Mean Temperature at Geneva Observatory', 'Data Visualization'))
+INFO = st.sidebar.radio("Content",('Project description', 'Mean Temperature at Geneva Observatory','Extreme Value Analysis', 'Data Visualization'))
     
 
 # PROJECT DESCRIPTION
@@ -53,13 +54,17 @@ elif INFO == "Mean Temperature at Geneva Observatory":
     elif SELECTED_MODE == MODES_TS[1]:
         monthly_analysis()
 
+elif INFO == 'Extreme Value Analysis':
+
+    SELECTED_MODE = st.sidebar.selectbox("Part", MODES_EVA, index=0)
+        
+    if SELECTED_MODE == MODES_EVA[0]:
+        max_min_analysis()
     
 # INTERACTIVE AND STATIC DATA VISUALIZATION
 
 elif INFO == 'Data Visualization':
 
-    
-    
     SELECTED_MODE = st.sidebar.selectbox("Visualization mode", MODES, index=0)
     if SELECTED_MODE == MODES[0]:
         

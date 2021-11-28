@@ -77,8 +77,8 @@ def monthly_analysis():
     def create_button(label, n_visible):
         return dict(label=label,
                          method="update",
-                         args=[{"visible": [bool(n_visible==m) for m in np.arange(1,13)]}
-                         ])
+                         args=[{"visible": [bool(n_visible==m) for m in np.arange(1,13)]}]
+                         )
     
     st.markdown("On the full plot of the time serie, the seasonal component is clearly visible and it can be difficult to detect any global behaviour of a possible trend. In order to avoid this disadvantage we can look at the figure above, where we plot the time series of mean temperature by month on the period 1901-2021. This figure allow us to have a better visualization of the tendancy of the time serie visualisation of the time series trend through each month.")
     
