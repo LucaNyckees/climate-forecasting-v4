@@ -25,6 +25,7 @@ import plotly.figure_factory as ff
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
+from plotly.validators.scatter.marker import SymbolValidator
 
 def max_min_analysis():
     st.title("Temeprature Extremes at Geneva Observatory")
@@ -129,10 +130,74 @@ def max_min_analysis():
     file = "DataGenerated/DailyEVA/Parameters_stability/ "+str(SELECTED_MONTH2)+" .png"
     st.image(file)
     
-    parameter_stability_plot_estimate_threshold = pd.read_csv("DataGenerated/DailyEVA/Parameters_stability/visual_estimate.csv",dtype='a').drop(labels='Unnamed: 0',axis = 1)
+    parameter_stability_plot_estimate_threshold = pd.read_csv("DataGenerated/DailyEVA/Parameters_stability/visual_estimate.csv",dtype='a')
+    th_thumb = pd.read_csv("DataGenerated/DailyEVA/th_thumb.csv",dtype='a')
+    threshold_estimate = parameter_stability_plot_estimate_threshold.append(th_thumb)
+    threshold_estimate.rename(columns={'Unnamed: 0': ''}, index={'estimate': 'Visual estimate'}, inplace=True)
     
-    st.markdown("On the following table, we can see a estimation of the threshold for each month, according to the visual inspection of the parameters stability plots.")
+    st.markdown("On the following table, we can see a estimation of the threshold for each month, according to the visual inspection of the parameters stability plots and according to some rules of thumb describe below.")
     
-    st.dataframe(parameter_stability_plot_estimate_threshold)
+    st.table(threshold_estimate)
+    
+    with st.expander("Rules of Thumb"):
+        st.markdown("h")
+        
+    th_score = pd.read_csv("DataGenerated/DailyEVA/th_score.csv")
+    th_cvm = pd.read_csv("DataGenerated/DailyEVA/th_cvm.csv")
+    th_th = pd.read_csv("DataGenerated/DailyEVA/th_th.csv")
+    
+    def create_button(label, n_visible):
+        return dict(label=label,
+                         method="update",
+                         args=[{"visible": [bool(n_visible==m) for m in np.arange(1,13)]}]
+                         )
+    fig = go.Figure()
+    
+    for i in range(1,13):
+        fig.add_trace(
+            go.Scatter(x=th_th[calendar.month_name[i]],
+                       y=th_score[calendar.month_name[i]],
+                       name=calendar.month_name[int(i)],
+                       line=dict(color=px.colors.qualitative.G10[(i-1)%9]),
+                       mode = 'lines+markers'))
+        fig.add_trace(
+            go.Scatter(x=th_th[calendar.month_name[i]],
+                       y=th_cvm[calendar.month_name[i]],
+                       name=calendar.month_name[int(i)],
+                       marker=dict(color=px.colors.qualitative.G10[(i-1)%9],
+                       symbol="square"),
+                       mode = 'lines+markers'))
+        
+    fig.add_hline(y=0.05,line_dash="dash", line_color="red", name = 'alpha = 0.05')
 
-
+    
+    fig.update_layout(
+        updatemenus=[
+            dict(
+                type="buttons",
+                direction="right",
+                active=0,
+                x=0.87,
+                y=1.12,
+                buttons=list([create_button(calendar.month_name[int(m)],m) for m in np.arange(1,13)]),
+            )
+        ])
+    fig.update_layout(
+    title_text="P-value of the Score and Cramér-von Mises Tests", title_x= 0.5, title_y= 1,
+    xaxis_domain=[0.05, 1.0]
+    )
+    
+    fig['layout'].update({
+        'xaxis': {
+            'title': 'Thresholds',
+            'zeroline': False
+        },
+        'yaxis': {
+            'title':"P-value"
+        },
+        
+        'width': 1200,
+        'height': 600
+    })
+        
+    st.plotly_chart(fig)
