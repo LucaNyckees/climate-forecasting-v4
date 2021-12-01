@@ -122,7 +122,7 @@ def max_min_analysis():
     st.image(file)
     
     st.markdown(r'''
-    The parameter stability plots involves plotting the modifed scale parameter and the shape parameter against the threshold u for a range of threshold which has been chosen to go from the 80% quantile to the 99% quantile. The parameter estimates should be stable (i.e. constant) above the threshold at which the GPD model becomes valid. In practise, the mean excess values and parameter estimates are calculated from relatively small amounts of data, so the plots will not look either linear or constant even when the GPD model becomes valid. Confidence intervals are included, so that we can evaluate whether the plots look linear or constant once we have accounted for the effects of estimation uncertainty. This is not easy to do by eye, and the interpretation of these plots often requires a good deal of subjective judgement.
+    The parameter stability plots involves plotting the modifed scale parameter and the shape parameter against the threshold $u$ for a range of threshold which has been chosen to go from the 80% quantile to the 99% quantile. The parameter estimates should be stable (i.e. constant) above the threshold at which the GPD model becomes valid. In practise, the mean excess values and parameter estimates are calculated from relatively small amounts of data, so the plots will not look either linear or constant even when the GPD model becomes valid. Confidence intervals are included, so that we can evaluate whether the plots look linear or constant once we have accounted for the effects of estimation uncertainty. This is not easy to do by eye, and the interpretation of these plots often requires a good deal of subjective judgement.
     ''')
     
     SELECTED_MONTH2 = st.selectbox("Choose a month to view its Parameters Stability plot",calendar.month_name[1:] , index=0)
@@ -139,11 +139,16 @@ def max_min_analysis():
     
     st.table(threshold_estimate)
     
+    
     with st.expander("Rules of Thumb"):
         st.markdown("h")
         
+        
+    st.markdown(r'''Then we applied the multiple-threshold diagnostic. To do this, we used $m = 41$ threholds from the $85\%$ quantile for each month to the threshold which is such that only 30 observations of each month are above this threshold. We calculated the p-values using the score test based on the $\chi_{m-i}^2$ null distribution, $i = 1,... ,m-1$. Our selection method consists of choosing, for each month, the smallest threshold that does not allow us to reject the null hypothesis at a significance level of $\alpha = 0.05$. However, as we can see in the figure below, this method allows us, for some months, to reject our null hypothesis for any threshold above the 80% quantile of each month. This would mean that for these months, we would have to consider thresholds below the 80% quantile, but this would introduce too much bias in our model. In cases where our method allows us to select a threshold, it can be seen that this is generally higher than the 90% quantile. Although this method allows us to choose a threshold more objectively than the graphical methods based on the evaluation of mean residuals life plots and parameters stability plots, it still tends to choose too low thresholds.
+    ''')
+        
     th_score = pd.read_csv("DataGenerated/DailyEVA/th_score.csv")
-    th_cvm = pd.read_csv("DataGenerated/DailyEVA/th_cvm.csv")
+    #th_cvm = pd.read_csv("DataGenerated/DailyEVA/th_cvm.csv")
     th_th = pd.read_csv("DataGenerated/DailyEVA/th_th.csv")
     
     def create_button(label, n_visible):
@@ -158,15 +163,16 @@ def max_min_analysis():
             go.Scatter(x=th_th[calendar.month_name[i]],
                        y=th_score[calendar.month_name[i]],
                        name=calendar.month_name[int(i)],
-                       line=dict(color=px.colors.qualitative.G10[(i-1)%9]),
+                       marker=dict(color=px.colors.qualitative.G10[(i-1)%9],size = 8),
                        mode = 'lines+markers'))
-        fig.add_trace(
-            go.Scatter(x=th_th[calendar.month_name[i]],
-                       y=th_cvm[calendar.month_name[i]],
-                       name=calendar.month_name[int(i)],
-                       marker=dict(color=px.colors.qualitative.G10[(i-1)%9],
-                       symbol="square"),
-                       mode = 'lines+markers'))
+    #for i in range(1,13):
+        #fig.add_trace(
+            #go.Scatter(x=th_th[calendar.month_name[i]],
+                      # y=th_cvm[calendar.month_name[i]],
+                       #name=calendar.month_name[int(i)]+" (Likelihood Ratio Test)",
+                       #marker=dict(color=px.colors.qualitative.G10[(i)%9],
+                       #symbol="square",size = 8),
+                      # mode = 'lines+markers'))
         
     fig.add_hline(y=0.05,line_dash="dash", line_color="red", name = 'alpha = 0.05')
 
@@ -183,7 +189,7 @@ def max_min_analysis():
             )
         ])
     fig.update_layout(
-    title_text="P-value of the Score and Cramér-von Mises Tests", title_x= 0.5, title_y= 1,
+    title_text="P-value of the Score Test", title_x= 0.5, title_y= 1,
     xaxis_domain=[0.05, 1.0]
     )
     
@@ -201,3 +207,52 @@ def max_min_analysis():
     })
         
     st.plotly_chart(fig)
+
+    with st.expander("SCore and Cramér-Von Mises Tests"):
+        st.markdown("")
+        
+    st.markdown(r'''For the rest of this study we will therefore take our thresholds as the 90% quantile of each month, as it seems to be accurate.
+    ''')
+    
+    st.header("Declustering and fit of the POT")
+    
+    st.markdown(r'''
+    ''')
+    
+    SELECTED_MONTH3 = st.selectbox("Choose a month to view the diagnostic plot of the POT fit",calendar.month_name[1:] , index=0)
+
+    file = "DataGenerated/DailyEVA/Diag_plot/ "+str(SELECTED_MONTH3)+" .png"
+    st.image(file)
+    
+    POT_coef_estimation = pd.read_csv("DataGenerated/DailyEVA/POT_estimation.csv")
+    POT_coef_estimation.rename(columns={'Unnamed: 0': ''}, inplace=True)
+    POT_coef_estimation = POT_coef_estimation.set_index('',drop = True)
+    
+    st.table(POT_coef_estimation.style.apply(lambda x: ["background-color: lightsteelblue"
+                          if ((0 > x.iloc[6]
+                                                    and 0 > x.iloc[7]))
+                          else "" for i, v in enumerate(x)], axis = 1))
+    dd = np.array([1,3,5,6,7,8,9,10,11,12])
+    SELECTED_MONTH4 = st.selectbox("Choose a month to view its profile likelihood plot",[calendar.month_name[i] for i in dd] , index=0)
+
+    file = "DataGenerated/DailyEVA/Prof_likelihood/ "+str(SELECTED_MONTH4)+" .png"
+    st.image(file)
+    
+    st.header("Gumbel fit")
+    
+    SELECTED_MONTH5 = st.selectbox("Choose a month to view the diagnostic plot of the Gumbel fit",[calendar.month_name[i] for i in dd] , index=0)
+
+    file = "DataGenerated/DailyEVA/Diag_plot_gumbel/ "+str(SELECTED_MONTH5)+" .png"
+    st.image(file)
+    
+    p_val = pd.read_csv("DataGenerated/DailyEVA/Likelihood_ratio_p_val.csv")
+    p_val.rename(columns={'Unnamed: 0': '','dev': 'Deviance','p_val': 'p_value'}, inplace=True)
+    p_val = p_val.set_index('',drop = True)
+    
+    c1,c2,c3 = st.columns([2,2,2])
+    with c2:
+        st.table(p_val.style.set_caption("P-values of the likelihood ratio test"))
+     
+     st.hearder("Non-stationarity: Modelling")
+     
+     
