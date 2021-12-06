@@ -32,7 +32,7 @@ def max_min_analysis():
     
     st.header("Dataset")
     
-    st.markdown("The data we propose to work with is the series of maximum and minimum temperature at Geneva Observatory during the period 1901-2021. We will first perform our analysis on the daily maxima series, and then on the daily minima series. Below, a box-plot of the monthly temepratures has been performed, showing the variability of the temperatures for each month.")
+    st.markdown("The data we propose to work with is the series of maximum temperature at Geneva Observatory during the period 1901-2021. We will first perform our analysis on the daily maxima series. Below, a box-plot of the monthly temepratures has been performed, showing the variability of the temperatures for each month.")
     
     data_max = pd.read_csv("DataGenerated/DailyEVA/Daily_max.csv")
     
@@ -141,7 +141,8 @@ def max_min_analysis():
     
     
     with st.expander("Rules of Thumb"):
-        st.markdown("h")
+        st.markdown(r'''The differents rules of thumb consists in choosing ine of the sample points as a threshold: the choice is pratically equivalent to estimation of the $k$th upper order statistic $X_{n-k+1}$ from the ordered sequence $X_{(1)}, ...,X_{(n)}$. Frequently used is the 90%  quantile. Other rules can be used, such as the square root $k = \sqrt{n}$ (rules of thumb 2 in the above table) or again the rule $k = n^{\frac{2}{3}}/\log(\log(n))$ (rules of thumb 3 in the above table).
+        ''')
         
         
     st.markdown(r'''Then we applied the multiple-threshold diagnostic. To do this, we used $m = 41$ threholds from the $85\%$ quantile for each month to the threshold which is such that only 30 observations of each month are above this threshold. We calculated the p-values using the score test based on the $\chi_{m-i}^2$ null distribution, $i = 1,... ,m-1$. Our selection method consists of choosing, for each month, the smallest threshold that does not allow us to reject the null hypothesis at a significance level of $\alpha = 0.05$. However, as we can see in the figure below, this method allows us, for some months, to reject our null hypothesis for any threshold above the 80% quantile of each month. This would mean that for these months, we would have to consider thresholds below the 80% quantile, but this would introduce too much bias in our model. In cases where our method allows us to select a threshold, it can be seen that this is generally higher than the 90% quantile. Although this method allows us to choose a threshold more objectively than the graphical methods based on the evaluation of mean residuals life plots and parameters stability plots, it still tends to choose too low thresholds.
@@ -208,8 +209,8 @@ def max_min_analysis():
         
     st.plotly_chart(fig)
 
-    with st.expander("Score and Cramér-Von Mises Tests"):
-        st.markdown("")
+    with st.expander("Score Tests"):
+        st.markdown("For more details on the [Score Test](https://link.springer.com/article/10.1007/s10687-014-0183-z)")
         
     st.markdown(r'''For the rest of this study we will therefore take our thresholds as the 90% quantile of each month, as it seems to be accurate.
     ''')
@@ -286,3 +287,10 @@ def max_min_analysis():
     
     st.markdown("It can be seen that except for the months of February and April where the returns levels are underestimated compared to the maximum temperatures observed over the period 1901-2021, we have that the observed maximum temperatures correspond to a returns period of 100 to 200 years.")
 
+
+    st.header("Discussion")
+    
+    st.markdown("The aim of this work was to study the series of maximal temperatures at Geneva Observatory by using the peaks-over-threshold method. A particular interest was given to the choice of the threshold to perform such an analysis. Indeed, the choice of the threshold affects the estimation of the GPD parameters. Different method were used to help the choice of the threshold: graphical diagnostics, rules of thumbs and statistical tests. Rules of thumb are easy to use since they choose one particular value from the series as the threshold. Graphical diagnostics consist in analysisng different plots, but are often very difficult to interpret as they usually require a lot of subjectivity. Finally, a other method using statistical tets was used, which is more demanding computationally, but gave results easier to interpret as the comparison od p-values is more straightforward. Nevertheless, in our case this method tended to give us much too low thresholds. Lastly, we chose to use the rule of thumb with the 90% quantile, as it gave us thresholds close to those found with the diagnostic plots. ")
+    
+    st.markdown("Concerning the data, a strong seasonal variation is present in the temperature series, as temperature fluctuate along the year. To perform our study, we decided to avoidthis seasonnal variations and cut the data into different series for each month. In addition, in order to work with data that are not dependent we performed a declustering on our data. However, after further analysis of what exactly this declustering did, we realised that it was more or less the same as considering the maximum temperature of each month. This would lead us to change our approach in a future study and to use a block-maxima approach instead of a point-over-threshold approach. As for the results of our modelling, we ended up modelling the extremes of each month with a Gumbel distribution, except for February and April for which a model with negative shape parameters seemed more appropriate. As for the returns levels, we observed that those of February and April seemed to underestimate the maximum temperatures observed over the period under consideration, nevertheless for the other months the calculated returns levels are quite consistent with the observed maximums.")
+    st.markdown("For further work, it could be possible to use a time-varying threshold and perform the analysis on the whole time series. This would take into account the effect of seasonality.")

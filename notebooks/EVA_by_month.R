@@ -28,16 +28,14 @@ month <- unique(df_max$Month)
 
 ## ---- POT approach --- ##
 
-## --- Mean residual life plots
-
 for(i in 1:12){
   dat <- subset(df_max, Month == month[i],select= TG)$TG
-  qu.min <- quantile(dat, 0.5)
+  qu.min <- quantile(dat, 0.7)
   qu.max <- quantile(dat,(length(dat)-30)/length(dat))
   
   par(mfrow=c(1,1))
   png(file = paste("DataGenerated/DailyEVA/Mean_Residual_Life/",month.name[i],".png"), width = 1200, height = 500)
-  mrlplot(dat, tlim=c(qu.min, qu.max))
+  mrlplot(dat, u.range=c(qu.min, qu.max))
   dev.off()
 }
 
@@ -179,6 +177,53 @@ for(i in dd){
 write.csv(p_val, file = "DataGenerated/DailyEVA/Likelihood_ratio_p_val.csv")
 
 
+## --- Return level 
+
+return_POT <- function(j, period){
+  data <- subset(df_max, Month == month.name[[j]],select= c(index,TG))
+  return_level <- POT_fit$month.name[[j]]$threshold + POT_fit$month.name[[j]]$est[[1]]/POT_fit$month.name[[j]]$est[[2]]*((period*30.5*POT_fit$month.name[[j]]$pat)^(POT_fit$month.name[[j]]$est[[2]])-1)
+}
+
+return_Gumbel <- function(j, period){
+  return_l <- Gumbel_fit$month.name[[j]]$threshold + Gumbel_fit$month.name[[j]]$est[[1]]*log(period* Gumbel_fit$month.name[[j]]$pat)
+}
+
+d <- rep(0,12)
+return_levels <- data.frame(r10 = d, r20 = d, r50 = d, r100 = d,r200 = d, r1000 = d,max_obs = d, row.names = month.name)
+
+period <- c(10,20,50,100,200,1000)
+
+for(i in 1:6){
+  return_levels[month.name[[2]],i] <- return_POT(1, period[i])
+}
+return_levels[month.name[[2]],7] <- max(subset(df_max, Month == month[2],select= TG))
+
+for(i in 1:6){
+  return_levels[month.name[[4]],i] <- return_POT(1, period[i])
+}
+return_levels[month.name[[4]],7] <- max(subset(df_max, Month == month[2],select= TG))
+
+c <- c(1,3,5,6,7,8,9,10,11,12)
+
+for(cc in c){
+  for(i in 1:6){
+    return_levels[month.name[[cc]],i] <- return_Gumbel(cc, period[i])
+  }
+  return_levels[month.name[[cc]],7] <- max(subset(df_max, Month == month[cc],select= TG))
+  
+}
+
+
+write.csv(return_levels, file = "DataGenerated/DailyEVA/return_levels.csv")
+
+
+## -- Profile Likelihood of the return levels
+return_levels
+data <- subset(df_max, Month == month[2],select= c(index,TG))
+colnames(data) <- c("time","obs")
+dat <- clust(data = data,u = quantile(data$obs,0.90),tim.cond = 1,clust.max = TRUE)
+fit2<-gpd.fit(dat,threshold=quantile(data$obs,0.90), npy=30.5)
+gpd.prof(z=fit2, m=5, xlow=13, xup=20, npy = 30.5, conf = 0.95)
 
 
 
