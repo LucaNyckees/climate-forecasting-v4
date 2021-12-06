@@ -106,7 +106,7 @@ def max_min_analysis():
    
     st.plotly_chart(fig)
     
-    st.markdown("To avoid these seasonal variations, a  first common approach in an analysis is to consider different series for each month of the year. In our analysis, the temperatures of January from 1901 to 2021, the temperatures of February from 1901 to 2021, etc. A small trend could be observed for certain months, but it was not taken into account in this first  extreme value analasis. Then, the selection of a fixed threshold for each month was made possible.")
+    st.markdown("To avoid these seasonal variations, a  first common approach in an analysis is to consider different series for each month of the year. In our analysis, the temperatures of January from 1901 to 2021, the temperatures of February from 1901 to 2021, etc. A small trend could be observed for certain months, as in our previous study, but it was not taken into account in this first  extreme value analasis. Then, the selection of a fixed threshold for each month was made possible.")
 
 
     st.header("Choice of Threshold")
@@ -208,7 +208,7 @@ def max_min_analysis():
         
     st.plotly_chart(fig)
 
-    with st.expander("SCore and Cramér-Von Mises Tests"):
+    with st.expander("Score and Cramér-Von Mises Tests"):
         st.markdown("")
         
     st.markdown(r'''For the rest of this study we will therefore take our thresholds as the 90% quantile of each month, as it seems to be accurate.
@@ -216,13 +216,22 @@ def max_min_analysis():
     
     st.header("Declustering and fit of the POT")
     
-    st.markdown(r'''
+    st.markdown(r'''The POT method requires the exceedances to be mutually independent.
+    However, for the temperatures data, threshold exceedances are seen to occur
+    in groups: an extremely warm day is likely to be followed by another. In order to deal with independent variables and be able to apply the POT method, a commonly used technique is declustering, which  filters the dependent observations to obtain a set of threshold excesses that are approximately independent.
     ''')
+    st.markdown("The clusters are defined as follows. First, a threshold is  fixed and clusters of exceedances  are consecutive exceedances of this threshold. Then, a run length (minimum  separation) $r$ is set between each cluster: a cluster is terminated whenever the separation between two threshold exceedances is greater than the run length $r$. The maximum excess in each cluster is identified, and these cluster maxima can be assumed to be independent. Then, the GPD can be  fitted to the cluster maxima.")
+    st.markdown(r"Thus, it is necessary for the temperature data to perform a declustering in order to estimate the parameters $\sigma$  and $\xi$ . A run period of $r = 2$ days was chosen, and the threshold was set to the 90% quantile, as it seems to be quite accurate. In the figures below, we have the diagnostic plots for each month.")
     
     SELECTED_MONTH3 = st.selectbox("Choose a month to view the diagnostic plot of the POT fit",calendar.month_name[1:] , index=0)
 
     file = "DataGenerated/DailyEVA/Diag_plot/ "+str(SELECTED_MONTH3)+" .png"
     st.image(file)
+    
+    st.markdown(r'''The  fit seems to be good since the probability and quantile plots are fairly linear (confidence intervals taken into account) for each month except for the months. In addition, it would appear that there are too few points to obtain a good agreement between the fitted density and the estimated core density. \n
+    La table ci-dessous regroupe les estimations des paramètres $\sigma$  et $\xi$ pour chaque mois, dans les colonnes "sigma" and "shape". In addition, we also have in this table, the standard deviations of our estimates, as well as some normal-based 95% confidence intervals for the both parameters.
+
+    ''')
     
     POT_coef_estimation = pd.read_csv("DataGenerated/DailyEVA/POT_estimation.csv")
     POT_coef_estimation.rename(columns={'Unnamed: 0': ''}, inplace=True)
@@ -232,18 +241,29 @@ def max_min_analysis():
                           if ((0 > x.iloc[6]
                                                     and 0 > x.iloc[7]))
                           else "" for i, v in enumerate(x)], axis = 1))
+                          
+    st.markdown(r"The confidence intervals for the shape parameter all contain $\xi = 0$, except for the estimate for February and April. This suggests that a Gumbel distribution ($\xi$ fixed at $0$) could be at the origin of the extremes patterns underlying these ten months. To investigate this further, we calculated and plotted the profiles likelihood of the parameters with 95% confidence intervals (which are represented on the plots by the values of the parameters whose log-likelihood profile is above the horizontal dotted line).")
+    
     dd = np.array([1,3,5,6,7,8,9,10,11,12])
     SELECTED_MONTH4 = st.selectbox("Choose a month to view its profile likelihood plot",[calendar.month_name[i] for i in dd] , index=0)
 
     file = "DataGenerated/DailyEVA/Prof_likelihood/ "+str(SELECTED_MONTH4)+" .png"
     st.image(file)
     
+    st.markdown(r"For these ten months, the plot of the log-likelihood profiles suggests that the hypothesis $\xi = 0$ is plausible. It is therefore interesting to explore this possibility further.")
+    
     st.header("Gumbel fit")
+    
+    st.markdown(r'''On the plots below we have the Gumbel fit plots for all months except February and April.
+    ''')
     
     SELECTED_MONTH5 = st.selectbox("Choose a month to view the diagnostic plot of the Gumbel fit",[calendar.month_name[i] for i in dd] , index=0)
 
     file = "DataGenerated/DailyEVA/Diag_plot_gumbel/ "+str(SELECTED_MONTH5)+" .png"
     st.image(file)
+    
+    st.markdown(r'''The diagnostic plots seem to indicate an equally good, if not better, fit than the POT model. To decide whether to consider the two-parameter or the one-parameter model, we performed a log-likelihood ratio test for each of the months concerned, in order to find out whether we can significantly assume that $\xi = 0$. The results of these tests are presented in the table below. It can be seen that the null hypothesis, $\xi = 0$, cannot be rejected for each month. In the rest of this study we will therefore consider the one parameter model for each of these months.
+    ''')
     
     p_val = pd.read_csv("DataGenerated/DailyEVA/Likelihood_ratio_p_val.csv")
     p_val.rename(columns={'Unnamed: 0': '','dev': 'Deviance','p_val': 'p_value'}, inplace=True)
@@ -253,6 +273,16 @@ def max_min_analysis():
     with c2:
         st.table(p_val.style.set_caption("P-values of the likelihood ratio test"))
      
-     st.hearder("Non-stationarity: Modelling")
+    st.header("Return Levels and Return Periods")
      
+    return_levels = pd.read_csv("DataGenerated/DailyEVA/return_levels.csv")
+    
+    st.markdown(r'''In the table below, we have estimates of return levels for return periods of 10, 20, 50, 100, 200 and 1000 years, as well as the maximum temperature observe in each month during the study period.
+     ''')
      
+    return_levels.rename(columns={'Unnamed: 0': ''}, inplace=True)
+    return_levels = return_levels.set_index('',drop = True)
+    st.table(return_levels)
+    
+    st.markdown("It can be seen that except for the months of February and April where the returns levels are underestimated compared to the maximum temperatures observed over the period 1901-2021, we have that the observed maximum temperatures correspond to a returns period of 100 to 200 years.")
+
