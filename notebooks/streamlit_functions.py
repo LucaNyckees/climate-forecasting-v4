@@ -15,11 +15,105 @@ from scipy.stats.stats import pearsonr
 import seaborn as sns
 import plotly.graph_objects as go
 import plotly.express as px
+from textwrap import wrap
+import matplotlib.colors as mcolors
 
-from plotly_features import plotly_mean_temp, plotly_hist_mean, plotly_min, plotly_max, plotly_std, plotly_mean_temp_global
+from plotly_features import plotly_mean_temp, plotly_hist_mean, plotly_min, plotly_max, plotly_std, plotly_mean_temp_global, circular_vision, all_obs_precise, all_obs
+
+from helpers import data_processing, to_monthly, geo_correlation_net
 
 from streamlit_forecasting import st_forecasting
 import streamlit.components.v1 as components
+
+
+def st_geo_correlation_net(dfs, names):
+    
+    values = st.sidebar.slider('Window of years over which to correlate stations recordings',1901, 2020, (1920, 1921))
+    
+    y1 = values[0]
+    y2 = values[1]
+    
+    threshold = st.sidebar.slider("Correlation threshold", 0.0, 1.0, value=0.8)
+    
+    G = geo_correlation_net(dfs, names, y1, y2, threshold)
+    
+    nt = Network("340px", "860px",notebook=True)
+    nt.from_nx(G)
+    
+    st.markdown("For each slider value, we plot a threshold-network induced by the correlation matrix between each station.")
+        
+    with st.expander("Show parametrized correlation network"):
+        
+        pv_static(nt)
+    
+    
+    
+
+def multiple_data_processing():
+    
+    ids = [('0239','BASEL'),('0240','GENEVE COINTRIN'),
+       ('0241','GENEVE OBS'),('0242','LUGANO'),
+       ('0243','SAENTIS'),('0244','ZUERICH'),
+       ('1649','GD ST-BERNARD'),('1661','SION 1')
+       #,
+       #('1662','SION 2'),
+       #('2180','PAYERNE')
+      ]
+
+    paths = ['../data/TG_STAID00'+file_id+'.txt' for (file_id,obs) in ids]
+    names = [obs for (file_id,obs) in ids]
+    
+    
+    dfs = [data_processing(path) for path in paths]
+    dfs_M = [to_monthly(df) for df in dfs]
+    
+    return dfs, dfs_M, names
+
+def st_all_obs_curves(dfs, dfs_M, names):
+    
+    values = st.sidebar.slider('Window of years to display',1901, 2020, (1960, 1962))
+    
+    st.header("Mean temperature over all observatories")
+    
+    st.markdown("This feature enables a time-window visualization of mean temperature over all observatories in Switzerland.")
+        
+    y1 = values[0]
+    y2 = values[1]
+    
+    fig1 = all_obs_precise(dfs, names, y1, y2)
+    fig2 = all_obs(dfs_M, names, y1, y2)
+    
+    st.plotly_chart(fig1)
+    st.plotly_chart(fig2)
+
+def st_circular_vision():
+    
+    data_temperature = data_processing('../data/observatoire-geneve/TG_STAID000241.txt')
+
+    df = data_temperature.copy()
+    plt.style.use("ggplot")
+
+
+    # Transformation en moyenne mesuelle
+    Years = df.Year.unique()
+    Months = df.Month.unique()
+    data_M = pd.DataFrame(np.array([[df[(df.Year == y)&(df.Month==m)].TG.mean(),
+                            df[(df.Year == y)&(df.Month==m)].TG.median(),df[(df.Year == y)&(df.Month==m)].TG.std()
+                                     ,y,int(m)] for y in Years for m in Months]),
+                         columns=["Mean","Median","Std","Years","Month"])
+    data_M = data_M.dropna()
+    data_M["grid"] = np.array([y + float(m-1)/12 for y in Years for m in Months])[:np.shape(data_M)[0]]
+
+    data_M.to_csv("DataGenerated/Monthly_Mean.csv",index=False)
+    
+    fig1 = circular_vision(data_M, Years, cumul=False)
+    fig2 = circular_vision(data_M, Years, cumul=True)
+    
+    left_column, right_column = st.columns(2)
+    
+    left_column.plotly_chart(fig1)
+    right_column.plotly_chart(fig2)
+    
 
 
 def display_date_slider(years):

@@ -70,6 +70,8 @@ elif INFO == 'Data Visualization':
         
         elt = st.radio("What do you want to observe?",('Mean temperature', 'Sunshine duration'))
         
+        station = st.radio("What station are you interested in?",('Geneva Observatory', 'All stations in Switzerland'))
+        
         st.header("Descriptive Statistics - Interactive Visualization")
         st.sidebar.header("Descriptive Data visualization")
         
@@ -78,17 +80,37 @@ elif INFO == 'Data Visualization':
         
         df = pd.read_table(path, sep = ',', names = ['SOUID','DATE','TG','Q_TG'], skiprows = range(0,20))
 
-        if st.checkbox("Descriptive statistics summary"):
+        if station == 'Geneva Observatory':
             
-            plot_stats_window_st(df,elt)
+            if st.checkbox("Descriptive statistics summary"):
+
+                plot_stats_window_st(df,elt)
+
+            elif st.checkbox("Display time-window feature"):
+
+                multiple_curves_window(df,elt)
+
+            elif st.checkbox("Display correlation network feature"):
+
+                correlation_net(df, elt)
+
+            elif st.checkbox("Display animated circular temperature evolution"):
+
+                st_circular_vision()
+                
+        elif station == 'All stations in Switzerland':
             
-        elif st.checkbox("Display time-window feature"):
+            st.markdown("Processing the data from all stations may take a few seconds...")
             
-            multiple_curves_window(df,elt)
-        
-        elif st.checkbox("Display correlation network feature"):
+            dfs, dfs_M, names = multiple_data_processing()
             
-            correlation_net(df, elt)
+            if st.checkbox("Display temperature curves on all observatories"):
+
+                st_all_obs_curves(dfs, dfs_M, names)
+                
+            elif st.checkbox("Display geographic correlation network"):
+                
+                st_geo_correlation_net(dfs, names)
             
             
 
