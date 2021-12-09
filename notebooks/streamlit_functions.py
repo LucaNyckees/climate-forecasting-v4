@@ -17,6 +17,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 from textwrap import wrap
 import matplotlib.colors as mcolors
+import folium
 
 from plotly_features import plotly_mean_temp, plotly_hist_mean, plotly_min, plotly_max, plotly_std, plotly_mean_temp_global, circular_vision, all_obs_precise, all_obs
 
@@ -25,6 +26,13 @@ from helpers import data_processing, to_monthly, geo_correlation_net
 from streamlit_forecasting import st_forecasting
 import streamlit.components.v1 as components
 
+def st_geolocation():
+    
+    st.markdown("""This is a map extracted from a folium.map object plotted with the geolocation data of all meteorological
+    stations in Switzerland whose measures are recorded in the data we consider. A Streamlit does not enable the incorporation of folium objects yet, we provide a simple static map; for an interactive version, one may check out the notebook *geolocation.ipynb* on our GitHub.""")
+    
+    st.image('geo.png')
+    
 
 def st_geo_correlation_net(dfs, names):
     
@@ -45,6 +53,14 @@ def st_geo_correlation_net(dfs, names):
     with st.expander("Show parametrized correlation network"):
         
         pv_static(nt)
+        
+    with st.expander("See explanation"):
+        
+        st.markdown("For $k_1,k_2\in\{1901,1902,...,2020\}$ and an observatory $i$, let $\mathbf{x}_{k_1,k_2}^i$ be the vector of mean temperatures recorded from year $k_1$ to year $k_2$ at observatory $i$. We define the *sample Pearson correlation coefficient between two vectors* $\mathbf{x}$ and $\mathbf{y}$ of size $n$ as the quantity")
+        st.latex(r'''\mathrm{Corr}(\mathbf{x},\mathbf{y})=\frac{\sum_{i=1}^n (\mathbf{x}_i-\bar{\mathbf{x}})(\mathbf{y}_i-\bar{\mathbf{y}})}{\sqrt{\sum_{i=1}^n (\mathbf{x}_i-\bar{\mathbf{x}})^2}\sqrt{\sum_{i=1}^n (\mathbf{y}_i-\bar{\mathbf{y}})^2}},\\
+        \text{where } \bar{v} \text{ denotes the mean } \frac{1}{n}\sum_{i=1}^n v_i \text{ of a vector } v=(v_i)_{i=1}^n.
+        ''')
+        st.markdown("For a choice of time-window $\Omega=\{k_1,k_1+1,...,k_2\}$ (*i.e.* a finite range of consecutive years) and two stations $i,j$, we define a matrix entry $M_{i,j}$ as $\mathrm{Corr}(\mathbf{x}_{k_1,k_2}^i,\mathbf{x}_{k_1,k_2}^j)$. We consider the correlation matrix $M=(M_{i,j})_{i,j}$. For each slider value, we plot a threshold-network induced by the correlation matrix between each year. More precisely, based on the correlation matrix $M$ defined above, and a choice of threshold value $C\in[0,1]$, we define a graph $G=G_{(M,C)}$ as follows. For each station $i\in S$ (where $S$ is the set of observatories in Switzerland we consider), we create a node $n_i$ in $G$. Moreover, for each pair of nodes $n_i,n_j$ in $G$, we draw an edge $(n_i,n_j)$ if and only if we have $M_{i,j}\geq C$, *i.e* if the stations $i$ and $j$ are correlated enough.")
     
     
     
@@ -60,14 +76,10 @@ def multiple_data_processing():
        #('2180','PAYERNE')
       ]
 
-    paths = ['../data/TG_STAID00'+file_id+'.txt' for (file_id,obs) in ids]
+    #paths = ['../data/TG_STAID00'+file_id+'.txt' for (file_id,obs) in ids]
     names = [obs for (file_id,obs) in ids]
     
-    
-    dfs = [data_processing(path) for path in paths]
-    dfs_M = [to_monthly(df) for df in dfs]
-    
-    return dfs, dfs_M, names
+    return names
 
 def st_all_obs_curves(dfs, dfs_M, names):
     

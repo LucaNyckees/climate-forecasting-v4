@@ -100,18 +100,29 @@ elif INFO == 'Data Visualization':
                 
         elif station == 'All stations in Switzerland':
             
-            st.markdown("Processing the data from all stations may take a few seconds...")
+            modes = ['Geolocation','Temperature curves', 'Correlation network']
             
-            dfs, dfs_M, names = multiple_data_processing()
+            mode = st.selectbox("Options", modes, index=0)
             
-            if st.checkbox("Display temperature curves on all observatories"):
-
+            names = multiple_data_processing()
+                
+            dfs = [pd.read_pickle(name+".pkl") for name in names]
+            dfs_M = [pd.read_pickle(name+"monthly.pkl") for name in names]
+            
+            if mode == modes[1]:
+                
+                st.markdown("Processing the data from all stations may take a few seconds...")
+                
                 st_all_obs_curves(dfs, dfs_M, names)
                 
-            elif st.checkbox("Display geographic correlation network"):
+            elif mode == modes[2]:
                 
                 st_geo_correlation_net(dfs, names)
-            
+                
+            elif mode == modes[0]:
+                
+                st_geolocation()
+                
             
 
 
