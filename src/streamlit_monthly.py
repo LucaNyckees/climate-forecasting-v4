@@ -41,8 +41,8 @@ def monthly_analysis():
         ),
     )
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "Time Series of the monthly mean temperatures at Geneva Observatory",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -90,8 +90,8 @@ def monthly_analysis():
         title_text="Time series of the mean temperature by month", title_x=0.5, title_y=1, xaxis_domain=[0.05, 1.0]
     )
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "xaxis": {"title": "Years", "zeroline": False},
             "yaxis": {"title": "Mean temperature (°C)"},
             "width": 1200,
@@ -136,8 +136,8 @@ def monthly_analysis():
         title_text="Monthly standardized temperature anomalies", title_x=0.5, title_y=1, xaxis_domain=[0.05, 1.0]
     )
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "xaxis": {"title": "Years", "zeroline": False},
             "yaxis": {"title": "Standardized  anomalies"},
             "width": 1200,
@@ -212,8 +212,8 @@ def monthly_analysis():
         title_text="Time series of the mean temperature by month", title_x=0.5, title_y=1, xaxis_domain=[0.05, 1.0]
     )
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "xaxis": {"title": "Years", "zeroline": False},
             "yaxis": {"title": "Mean temperature (°C)"},
             "width": 1200,
@@ -283,8 +283,8 @@ def monthly_analysis():
         ),
     )
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "Time Series of the seasonless time series",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -331,8 +331,8 @@ def monthly_analysis():
     )
     fig.add_hline(y=0.05, line_dash="dash", line_color="red", name="alpha = 0.05")
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "P-values of the Ljung-Box and McLeod-Li tests",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -380,8 +380,8 @@ def monthly_analysis():
 
     # fig.add_hline(y=0.05,line_dash="dash", line_color="red", name = 'alpha = 0.05')
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "Time series model selection for the seasonless mean temperature",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -421,8 +421,8 @@ def monthly_analysis():
         ),
     )
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "Residus of the ARMA(4,3) model",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -458,8 +458,8 @@ def monthly_analysis():
     )
     fig.add_hline(y=0.05, line_dash="dash", line_color="red", name="alpha = 0.05")
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "P-values of the Ljung-Box and McLeod-Li tests on the residus of the ARMA(4,3)",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -553,8 +553,8 @@ def monthly_analysis():
         title_text="Estimation of the monthly mean temperature ", title_x=0.5, title_y=1, xaxis_domain=[0.05, 1.0]
     )
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "xaxis": {"title": "Years", "zeroline": False},
             "yaxis": {"title": "Mean temperature (°C)"},
             "width": 1200,
@@ -625,8 +625,8 @@ def monthly_analysis():
         title_text="Estimate of the mean temperature by month", title_x=0.5, title_y=1, xaxis_domain=[0.05, 1.0]
     )
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "xaxis": {"title": "Years", "zeroline": False},
             "yaxis": {"title": "Mean temperature (°C)"},
             "width": 1200,
@@ -680,8 +680,8 @@ def monthly_analysis():
         ),
     )
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "Time Series of the seasonless time series",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -724,8 +724,8 @@ def monthly_analysis():
     )
     fig.add_hline(y=0.05, line_dash="dash", line_color="red", name="alpha = 0.05")
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "P-values of the Ljung-Box and McLeod-Li tests",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -773,8 +773,8 @@ def monthly_analysis():
 
     # fig.add_hline(y=0.05,line_dash="dash", line_color="red", name = 'alpha = 0.05')
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "Time series model selection for the seasonless mean temperature",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -813,8 +813,8 @@ def monthly_analysis():
             )
         ),
     )
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "Residus of the ARMA(5,4) model",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -850,8 +850,8 @@ def monthly_analysis():
     )
     fig.add_hline(y=0.05, line_dash="dash", line_color="red", name="alpha = 0.05")
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "P-values of the Ljung-Box and McLeod-Li tests on the residus of the ARMA(5,4)",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},

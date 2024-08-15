@@ -18,7 +18,7 @@ def max_min_analysis():
         "The data we propose to work with is the series of maximum temperature at Geneva Observatory during the period 1901-2021. We will first perform our analysis on the daily maxima series. Below, a box-plot of the monthly temepratures has been performed, showing the variability of the temperatures for each month."
     )
 
-    data_max = pd.read_csv(DATA_PATH / "generated" / "DailyEVA" / "Daily_max.csv")
+    data_max = pd.read_csv(DATAGENERATED_PATH / "DailyEVA" / "Daily_max.csv")
 
     N = 12
     c = ["hsl(" + str(h) + ",50%" + ",50%)" for h in np.linspace(0, 360, N)]
@@ -108,7 +108,7 @@ def max_min_analysis():
         "Choose a month to view its Mean Residual  Life plot", calendar.month_name[1:], index=0
     )
 
-    image = Image.open(DATA_PATH / "generated" / "DailyEVA" / "Mean_Residual_Life" / f"{SELECTED_MONTH1}.png")
+    image = Image.open(DATAGENERATED_PATH / "DailyEVA" / "Mean_Residual_Life" / f"{SELECTED_MONTH1}.png")
     st.image(image)
 
     st.markdown(r"""
@@ -119,13 +119,13 @@ def max_min_analysis():
         "Choose a month to view its Parameters Stability plot", calendar.month_name[1:], index=0
     )
 
-    image = Image.open(DATA_PATH / "generated" / "DailyEVA" / "Parameters_stability" / f"{SELECTED_MONTH2}.png")
+    image = Image.open(DATAGENERATED_PATH / "DailyEVA" / "Parameters_stability" / f"{SELECTED_MONTH2}.png")
     st.image(image)
 
     parameter_stability_plot_estimate_threshold = pd.read_csv(
-        DATA_PATH / "generated" / "DailyEVA" / "Parameters_stability" / "visual_estimate.csv", dtype="a"
+        DATAGENERATED_PATH / "DailyEVA" / "Parameters_stability" / "visual_estimate.csv", dtype="a"
     )
-    th_thumb = pd.read_csv(DATA_PATH / "generated" / "DailyEVA" / "th_thumb.csv", dtype="a")
+    th_thumb = pd.read_csv(DATAGENERATED_PATH / "DailyEVA" / "th_thumb.csv", dtype="a")
     threshold_estimate = parameter_stability_plot_estimate_threshold.append(th_thumb)
     threshold_estimate.rename(columns={"Unnamed: 0": ""}, index={"estimate": "Visual estimate"}, inplace=True)
 
@@ -219,7 +219,7 @@ def max_min_analysis():
         "Choose a month to view the diagnostic plot of the POT fit", calendar.month_name[1:], index=0
     )
 
-    image = Image.open(DATA_PATH / "generated" / "DailyEVA" / "Diag_plot" / f"{SELECTED_MONTH3}.png")
+    image = Image.open(DATAGENERATED_PATH / "DailyEVA" / "Diag_plot" / f"{SELECTED_MONTH3}.png")
     st.image(image)
 
     st.markdown(r"""The  fit seems to be good since the probability and quantile plots are fairly linear (confidence intervals taken into account) for each month except for the months. In addition, it would appear that there are too few points to obtain a good agreement between the fitted density and the estimated core density. \n
@@ -227,7 +227,7 @@ def max_min_analysis():
 
     """)
 
-    POT_coef_estimation = pd.read_csv(DATA_PATH / "generated" / "DailyEVA" / "POT_estimation.csv")
+    POT_coef_estimation = pd.read_csv(DATAGENERATED_PATH / "DailyEVA" / "POT_estimation.csv")
     POT_coef_estimation.rename(columns={"Unnamed: 0": ""}, inplace=True)
     POT_coef_estimation = POT_coef_estimation.set_index("", drop=True)
 
@@ -249,7 +249,7 @@ def max_min_analysis():
         "Choose a month to view its profile likelihood plot", [calendar.month_name[i] for i in dd], index=0
     )
 
-    image = Image.open(DATA_PATH / "generated" / "DailyEVA" / "Prof_likelihood" / f"{SELECTED_MONTH4}.png")
+    image = Image.open(DATAGENERATED_PATH / "DailyEVA" / "Prof_likelihood" / f"{SELECTED_MONTH4}.png")
     st.image(image)
 
     st.markdown(
@@ -265,13 +265,13 @@ def max_min_analysis():
         "Choose a month to view the diagnostic plot of the Gumbel fit", [calendar.month_name[i] for i in dd], index=0
     )
 
-    image = Image.open(DATA_PATH / "generated" / "DailyEVA" / "Diag_plot_gumbel" / f"{SELECTED_MONTH5}.png")
+    image = Image.open(DATAGENERATED_PATH / "DailyEVA" / "Diag_plot_gumbel" / f"{SELECTED_MONTH5}.png")
     st.image(image)
 
     st.markdown(r"""The diagnostic plots seem to indicate an equally good, if not better, fit than the POT model. To decide whether to consider the two-parameter or the one-parameter model, we performed a log-likelihood ratio test for each of the months concerned, in order to find out whether we can significantly assume that $\xi = 0$. The results of these tests are presented in the table below. It can be seen that the null hypothesis, $\xi = 0$, cannot be rejected for each month. In the rest of this study we will therefore consider the one parameter model for each of these months.
     """)
 
-    p_val = pd.read_csv(DATA_PATH / "generated" / "DailyEVA" / "Likelihood_ratio_p_val.csv")
+    p_val = pd.read_csv(DATAGENERATED_PATH / "DailyEVA" / "Likelihood_ratio_p_val.csv")
     p_val.rename(columns={"Unnamed: 0": "", "dev": "Deviance", "p_val": "p_value"}, inplace=True)
     p_val = p_val.set_index("", drop=True)
 
@@ -281,7 +281,7 @@ def max_min_analysis():
 
     st.header("Return Levels and Return Periods")
 
-    return_levels = pd.read_csv(DATA_PATH / "generated" / "DailyEVA" / "return_levels.csv")
+    return_levels = pd.read_csv(DATAGENERATED_PATH / "DailyEVA" / "return_levels.csv")
 
     st.markdown(r"""In the table below, we have estimates of return levels for return periods of 10, 20, 50, 100, 200 and 1000 years, as well as the maximum temperature observe in each month during the study period.
      """)

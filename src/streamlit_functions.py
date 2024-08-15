@@ -274,25 +274,26 @@ def multiple_curves_window(df, elt):
     fig1 = go.Figure()
     fig2 = go.Figure()
 
-    fig1["layout"].update(
-        {
+    fig1.update_layout(
+        title="TIME-WINDOW VIEWPOINT : CURVES",
+        xaxis_title="day of the year",
+        yaxis_title=elt,
+        **{
             "showlegend": True,
             "width": 600,
             "height": 500,
-        }
+        },
     )
-    fig2["layout"].update(
-        {
-            "showlegend": True,
-            "width": 600,
-            "height": 500,
-        }
-    )
-
-    fig1.update_layout(title="TIME-WINDOW VIEWPOINT : CURVES", xaxis_title="day of the year", yaxis_title=elt)
 
     fig2.update_layout(
-        title="TIME-WINDOW VIEWPOINT : HISTOGRAMS", xaxis_title="sunshine duration", yaxis_title="count of days"
+        title="TIME-WINDOW VIEWPOINT : HISTOGRAMS",
+        xaxis_title="sunshine duration",
+        yaxis_title="count of days",
+        **{
+            "showlegend": True,
+            "width": 600,
+            "height": 500,
+        },
     )
 
     values = st.sidebar.slider("Select a range of years", 1901, 2020, (1965, 1967))
@@ -370,14 +371,15 @@ def plot_stats_window_st(df, elt):
     df_ = df[df["Year"] == years[x]]
     values = [len(df_) - len(df_[df_["Q_TG"] == 9]), len(df_[df_["Q_TG"] == 9])]
     fig6 = go.Figure(data=[go.Pie(labels=labels, values=values)])
-    fig6["layout"].update(
-        {
+
+    fig6.update_layout(
+        title="Proportion of missing values",
+        **{
             "showlegend": True,
             "width": 400,
             "height": 400,
-        }
+        },
     )
-    fig6.update_layout(title="Proportion of missing values")
     st.sidebar.plotly_chart(fig6)
 
     fig7 = go.Figure()
@@ -515,12 +517,7 @@ def annual_analysis():
     fig.add_trace(go.Scatter(x=data_Y.Years, y=data_Y.Mean, showlegend=False), row=1, col=2)
     fig.add_trace(go.Scatter(x=data_Y.Years, y=data_Y.Median, showlegend=False), row=2, col=2)
     fig.add_trace(go.Scatter(x=data_Y.Years, y=data_Y.Std, showlegend=False), row=3, col=2)
-    fig["layout"].update(
-        {
-            "width": 1200,
-            "height": 600,
-        }
-    )
+    fig.update_layout(width=1200, height=600)
     fig.update_yaxes(title_text="Temperature (°C)", row=2, col=2)
 
     st.plotly_chart(fig)
@@ -586,8 +583,8 @@ def annual_analysis():
 
     fig.add_trace(go.Scatter(x=x, y=sc.stats.norm.cdf(x, loc=data_Y.Mean.mean(), scale=std), name="cdf"))
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "ECDF vs Normal CDF",
             "title_x": 0.5,
             "xaxis": {"title": "x", "zeroline": False},
@@ -625,8 +622,8 @@ def annual_analysis():
     fig.update_xaxes(title_text="x", row=1, col=2)
     fig.update_yaxes(title_text="Absolute deviation", row=1, col=2)
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
             "showlegend": False,
@@ -683,8 +680,8 @@ def annual_analysis():
     )
     # fig.add_hline(y=0.05,line_dash="dash", line_color="red", name = 'alpha = 0.05')
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "P-values of the Ljung-Box and McLeod-Li tests",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -748,8 +745,8 @@ def annual_analysis():
         col=2,
     )
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "Modelisation of the trend by GLS",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -810,8 +807,8 @@ def annual_analysis():
     )
     fig.add_trace(go.Scatter(x=data_Y.Years, y=trendless_gls.with_cts), row=1, col=2)
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "Trendless mean temperature",
             "title_x": 0.5,
             "xaxis": {"title": "Years", "zeroline": False},
@@ -855,8 +852,8 @@ def annual_analysis():
     )
     # fig.add_hline(y=0.05,line_dash="dash", line_color="red", name = 'alpha = 0.05')
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "P-values of the Ljung-Box and McLeod-Li tests on the trendless mean temperature",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -901,8 +898,8 @@ def annual_analysis():
 
     # fig.add_hline(y=0.05,line_dash="dash", line_color="red", name = 'alpha = 0.05')
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "Time series model selection for the trendless mean",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},
@@ -935,8 +932,8 @@ def annual_analysis():
     )
     fig.add_trace(go.Scatter(x=data_Y.Years, y=resid_arma2_0.resid), row=1, col=2)
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "Residus of the ARMA(2,0) model",
             "title_x": 0.5,
             "xaxis": {"title": "Years", "zeroline": False},
@@ -979,8 +976,8 @@ def annual_analysis():
     )
     # fig.add_hline(y=0.05,line_dash="dash", line_color="red", name = 'alpha = 0.05')
 
-    fig["layout"].update(
-        {
+    fig.update_layout(
+        **{
             "title": "P-values of the Ljung-Box and McLeod-Li tests on the residus of the ARMA(2,0)",
             "title_x": 0.5,
             "xaxis": {"zeroline": False},

@@ -153,7 +153,7 @@ def st_forecasting():
     # The drop on mean temperature in 1962 is of -1.5218 with conf_inf < -1
 
     def f_cst(x):
-        return coef_cst[0] + coef_cst[1] * (x >= break_year) + coef_cst[2] * x
+        return coef_cst.iloc[0] + coef_cst.iloc[1] * (x >= break_year) + coef_cst.iloc[2] * x
 
     data_Y["Mean_detrended"] = data_Y.Mean - f_cst(Years)
 
@@ -261,7 +261,7 @@ def st_forecasting():
         fig.add_trace(
             go.Scatter(
                 x=[last_year, last_year + 1],
-                y=[float(data_Y.Mean[data_Y.Years == last_year]), predictions[0]],
+                y=[float(data_Y.loc[data_Y.Years == last_year]["Mean"].iloc[0]), predictions[0]],
                 mode="lines",
                 name="liaison " + str(n + 1),
                 showlegend=False,
@@ -273,14 +273,14 @@ def st_forecasting():
             go.Scatter(x=delta_years, y=predictions, mode="lines", name="prediction " + str(n + 1), line=dict(width=1))
         )
 
-    fig["layout"].update(
-        {
-            "showlegend": True,
-            "width": 950,
-            "height": 500,
-        }
+    fig.update_layout(
+        title="FORECASTING RESULT",
+        xaxis_title="year",
+        yaxis_title="average temperature",
+        showlegend=True,
+        width=950,
+        height=500,
     )
-    fig.update_layout(title="FORECASTING RESULT", xaxis_title="year", yaxis_title="average temperature")
 
     st.plotly_chart(fig)
 
