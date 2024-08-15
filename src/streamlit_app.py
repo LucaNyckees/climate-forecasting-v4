@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from paths import paths
+from paths import get_data_file_path
 
 from streamlit_functions import (
     introduction,
@@ -78,7 +78,7 @@ elif INFO == "Data Visualization":
         st.header("Descriptive Statistics - Interactive Visualization")
         st.sidebar.header("Descriptive Data visualization")
 
-        path = paths(elt)
+        path = get_data_file_path(elt)
 
         df = pd.read_table(path, sep=",", names=["SOUID", "DATE", "TG", "Q_TG"], skiprows=range(0, 20))
 

@@ -11,7 +11,8 @@ from statsmodels.tsa.stattools import acf
 from sklearn.utils import resample
 import plotly.graph_objects as go
 
-from paths import DATA_PATH
+from paths import DATA_PATH, DATAGENERATED_PATH
+from helpers import df_to_csv
 
 plt.style.use("ggplot")
 
@@ -163,7 +164,7 @@ def st_forecasting():
     res = arma_mod.resid
     data_Y["resid"] = res
     param = np.array(arma_mod.params)
-    data_Y.resid.to_csv("DataGenerated/Annual_resid_ARMA2_0.csv", index=True)
+    df_to_csv(obj=data_Y, dir=DATAGENERATED_PATH, file_name="Annual_resid_ARMA2_0.csv", index=True)
 
     def forecast(data, n_forecast, phi, last):
         y = np.arange(int(last) + 1, int(last) + n_forecast + 1)

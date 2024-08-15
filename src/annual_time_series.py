@@ -18,7 +18,7 @@ from statsmodels.distributions.empirical_distribution import ECDF
 from statsmodels.tsa.stattools import acf
 from sklearn.utils import resample
 
-from paths import DATA_PATH
+from paths import DATA_PATH, DATAGENERATED_PATH
 
 
 data_temperature = pd.read_table(
@@ -59,7 +59,7 @@ data_Y = pd.DataFrame(
     columns=["Mean", "Median", "Std", "Years"],
 )
 # Rupture de la moyenne en 1962
-data_Y.to_csv("DataGenerated/Annual_Mean.csv", index=False)
+data_Y.to_csv(DATAGENERATED_PATH / "Annual_Mean.csv", index=False)
 
 
 # In[83]:
@@ -1031,7 +1031,7 @@ g.close()
 # In[217]:
 
 
-model_selection.to_csv("DataGenerated/Annual_modelSelection.csv", index=False)
+model_selection.to_csv(DATAGENERATED_PATH / "Annual_modelSelection.csv", index=False)
 
 
 # In[215]:

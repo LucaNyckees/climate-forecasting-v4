@@ -17,6 +17,8 @@ from streamlit_forecasting import st_forecasting
 import streamlit.components.v1 as components
 from PIL import Image
 
+from helpers import df_to_csv
+
 from plotly_features import (
     plotly_mean_temp,
     plotly_hist_mean,
@@ -138,7 +140,7 @@ def st_circular_vision():
     data_M = data_M.dropna()
     data_M["grid"] = np.array([y + float(m - 1) / 12 for y in Years for m in Months])[: np.shape(data_M)[0]]
 
-    data_M.to_csv(DATA_PATH / "generated" / "Monthly_Mean.csv", index=False)
+    df_to_csv(obj=data_M, dir=DATA_PATH / "generated", file_name="Monthly_Mean.csv", index=False)
 
     fig1 = circular_vision(data_M, Years, cumul=False)
     fig2 = circular_vision(data_M, Years, cumul=True)

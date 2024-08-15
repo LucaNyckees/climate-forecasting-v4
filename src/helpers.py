@@ -2,8 +2,9 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import networkx as nx
-from pyvis.network import Network
 from scipy.stats.stats import pearsonr
+from pathlib import Path
+import os
 
 
 def data_processing(path):
@@ -15,7 +16,6 @@ def data_processing(path):
     data_temperature["Day"] = [int(str(d)[6:8]) for d in data_temperature.DATE]
 
     # Compute the day of the year for each year
-    day_of_year = np.array(len(data_temperature["Day"]))
 
     adate = [datetime.strptime(str(date), "%Y%m%d") for date in data_temperature.DATE]
     data_temperature["Day_of_year"] = [d.timetuple().tm_yday for d in adate]
@@ -79,3 +79,9 @@ def geo_correlation_net(dfs, names, y1, y2, t):
     G.add_edges_from(edges)
 
     return G
+
+
+def df_to_csv(obj: pd.DataFrame, dir: Path, file_name: str, index: bool) -> None:
+    os.makedirs(dir, exist_ok=True)
+    obj.to_csv(path_or_buf=dir / file_name, index=index)
+    return None

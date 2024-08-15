@@ -6,7 +6,7 @@ import plotly.express as px
 import streamlit as st
 from PIL import Image
 
-from paths import DATA_PATH
+from paths import DATA_PATH, DATAGENERATED_PATH
 
 
 def max_min_analysis():
@@ -142,9 +142,8 @@ def max_min_analysis():
     st.markdown(r"""Then we applied the multiple-threshold diagnostic. To do this, we used $m = 41$ threholds from the $85\%$ quantile for each month to the threshold which is such that only 30 observations of each month are above this threshold. We calculated the p-values using the score test based on the $\chi_{m-i}^2$ null distribution, $i = 1,... ,m-1$. Our selection method consists of choosing, for each month, the smallest threshold that does not allow us to reject the null hypothesis at a significance level of $\alpha = 0.05$. However, as we can see in the figure below, this method allows us, for some months, to reject our null hypothesis for any threshold above the 80% quantile of each month. This would mean that for these months, we would have to consider thresholds below the 80% quantile, but this would introduce too much bias in our model. In cases where our method allows us to select a threshold, it can be seen that this is generally higher than the 90% quantile. Although this method allows us to choose a threshold more objectively than the graphical methods based on the evaluation of mean residuals life plots and parameters stability plots, it still tends to choose too low thresholds.
     """)
 
-    th_score = pd.read_csv(DATA_PATH / "generated" / "DailyEVA" / "th_score.csv")
-    # th_cvm = pd.read_csv("DataGenerated/DailyEVA/th_cvm.csv")
-    th_th = pd.read_csv(DATA_PATH / "generated" / "DailyEVA" / "th_th.csv")
+    th_score = pd.read_csv(DATAGENERATED_PATH / "DailyEVA" / "th_score.csv")
+    th_th = pd.read_csv(DATAGENERATED_PATH / "DailyEVA" / "th_th.csv")
 
     def create_button(label, n_visible):
         return dict(label=label, method="update", args=[{"visible": [bool(n_visible == m) for m in np.arange(1, 13)]}])

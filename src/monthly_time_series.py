@@ -16,7 +16,7 @@ from statsmodels.tsa.stattools import acf
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 import calendar
 
-from paths import DATA_PATH
+from paths import DATA_PATH, DATAGENERATED_PATH
 
 
 data_temperature = pd.read_table(
@@ -75,7 +75,7 @@ data_M["grid"] = np.array([y + float(m - 1) / 12 for y in Years for m in Months]
 # In[954]:
 
 
-data_M.to_csv("DataGenerated/Monthly_Mean.csv", index=False)
+data_M.to_csv(DATAGENERATED_PATH / "Monthly_Mean.csv", index=False)
 
 
 # In[923]:
@@ -400,7 +400,7 @@ g.close()
 # In[980]:
 
 
-model_selection.to_csv("DataGenerated/Monthly1_modelSelection.csv", index=False)
+model_selection.to_csv(DATAGENERATED_PATH / "Monthly1_modelSelection.csv", index=False)
 # model_selection
 
 
@@ -640,7 +640,7 @@ g.close()
 # In[1008]:
 
 
-model_selection.to_csv("DataGenerated/Monthly2_modelSelection.csv", index=False)
+model_selection.to_csv(DATAGENERATED_PATH / "Monthly2_modelSelection.csv", index=False)
 # model_selection
 
 
@@ -926,7 +926,7 @@ for m in range(12):
 
 
 mean_aic = model_selection.mean(axis=0)
-np.save("DataGenerated/model_selction_byMonth.npy", model_selection)
+np.save(DATAGENERATED_PATH / "model_selction_byMonth.npy", model_selection)
 
 
 # In[1145]:
@@ -1240,7 +1240,7 @@ g.close()
 # In[1101]:
 
 
-model_selection.to_csv("DataGenerated/Monthly4_modelSelection.csv", index=False)
+model_selection.to_csv(DATAGENERATED_PATH / "Monthly4_modelSelection.csv", index=False)
 # model_selection
 
 
