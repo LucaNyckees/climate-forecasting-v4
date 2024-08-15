@@ -4,7 +4,7 @@
 # GLOBALS                                                                       #
 #################################################################################
 SHELL:=/bin/bash
-python=python3.10
+python=python3
 BIN=venv/bin/
 
 all: requirements
@@ -31,9 +31,7 @@ requirements: venv
 
 # Run streamlit application
 st:
-
-	cd notebooks
-	@streamlit run streamlit_app.py --theme.primaryColor="#2c71de" --theme.backgroundColor="#678fd2" --theme.secondaryBackgroundColor="#767a96" --theme.textColor="#dfe4ea"
+	@streamlit run src/streamlit_app.py --theme.primaryColor="#2c71de" --theme.backgroundColor="#678fd2" --theme.secondaryBackgroundColor="#767a96" --theme.textColor="#dfe4ea"
 
 # Silencing commands
 .SILENT: venv requirements clean
