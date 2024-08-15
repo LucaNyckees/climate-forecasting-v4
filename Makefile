@@ -31,7 +31,21 @@ requirements: venv
 
 # Run streamlit application
 st:
-	@streamlit run src/streamlit_app.py --theme.primaryColor="#2c71de" --theme.backgroundColor="#678fd2" --theme.secondaryBackgroundColor="#767a96" --theme.textColor="#dfe4ea"
+	@streamlit run src/streamlit_app.py
+
+
+# Docker
+build_image:
+	@docker build . -t meteo_stats
+
+run:
+	@docker run \
+	-v `pwd`/.streamlit:/app/.streamlit \
+	-p 8080:8501 \
+	-it \
+	--rm \
+	--init \
+	meteo_stats
 
 # Silencing commands
 .SILENT: venv requirements clean

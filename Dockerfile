@@ -1,13 +1,8 @@
-FROM python:3.7.1
+FROM python:3.10
 COPY ./ ./app
 WORKDIR ./app
 
-RUN apt-get update && \
-    apt-get -y install curl && \
-    apt -y install curl dirmngr apt-transport-https lsb-release ca-certificates && \
-    curl -sL https://deb.nodesource.com/setup_12.x | bash && \
-    apt-get -y install nodejs
-
+RUN apt-get update
 RUN apt-get -y install make
 
 

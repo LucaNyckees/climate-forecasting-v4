@@ -1,3 +1,4 @@
 #!/bin/bash
-make data_ctd
-streamlit run src/visualization/st_app.py
+make venv
+source venv/bin/activate
+streamlit run src/streamlit_app.py
