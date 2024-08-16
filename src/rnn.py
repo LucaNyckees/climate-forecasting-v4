@@ -54,11 +54,11 @@ if __name__ == "__main__":
                     window = df.loc[k * window_size : (k + 1) * window_size, :]
                     # window = df.sample(window_size)
                     input_ = torch.from_numpy(window.to_numpy()).float()
-                    target = torch.from_numpy(
-                        df.loc[
-                            (k + 1) * window_size + 1 : (k + 2) * window_size + 1, :
-                        ].TG.to_numpy()
-                    ).view(-1,1).float()
+                    target = (
+                        torch.from_numpy(df.loc[(k + 1) * window_size + 1 : (k + 2) * window_size + 1, :].TG.to_numpy())
+                        .view(-1, 1)
+                        .float()
+                    )
                     output = model(input_)
 
                     # print(
